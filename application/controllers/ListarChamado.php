@@ -18,10 +18,14 @@ class ListarChamado extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function index()
+	public function index($pagina = 1)
 	{
 		$this->load->model('Chamado_model');
-		$data['chamados'] = $this->Chamado_model->lista();
+		$data['filtroEmail'] = $this->input->post('filtroEmail');
+		$data['filtroPedido'] = $this->input->post('filtroPedido');
+		$data['chamados'] = $this->Chamado_model->lista($pagina, $data);
+		$data['total'] = $this->Chamado_model->total($data);
+		$data['pagina'] = $pagina;
 
 		$this->load->view('head');
 		$this->load->view('listarChamado', $data);

@@ -24,4 +24,34 @@ class InserirChamado extends CI_Controller {
 		$this->load->view('inserirChamado');
 		$this->load->view('footer');
 	}
+
+	public function inserir()
+	{
+		
+		$this->load->model('Chamado_model');
+		$this->load->model('Cliente_model');
+		$this->load->model('Pedido_model');
+
+		$cliente['nome'] = $this->input->post('cliente');
+		$cliente['email'] = $this->input->post('email');
+		$chamado['id_pedido'] = $this->input->post('pedido');
+		$chamado['titulo'] = $this->input->post('titulo');
+		$chamado['observacao'] = $this->input->post('observacao');
+		$retorno = array();
+
+		$retorno['erroPedido'] = 0;
+		if(!$this->Pedido_model->validaPedido($chamado['id_pedido'])){
+			$retorno['erroPedido'] = 1;
+		}
+
+		$retorno['sucesso'] = 0;
+		if($retorno['erroPedido'] == 0){
+			$chamado['id_cliente'] = $this->Cliente_model->localizaCliente($cliente);
+			
+			$this->Chamado_model->inserir($chamado);
+			$retorno['sucesso'] = 1;
+		}
+
+		echo json_encode($retorno);
+	}
 }
